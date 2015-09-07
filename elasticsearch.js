@@ -54,7 +54,7 @@ async.parallel({
         ["-Des.http.port", elasticsearch.ELASTICSEARCH_HTTP_PORT].join("="),
         ["-Des.transport.tcp.port", elasticsearch.ELASTICSEARCH_TCP_PORT].join("="),
         ["-Des.cluster.name", elasticsearch.ELASTICSEARCH_CLUSTER_NAME].join("="),
-        ["-Des.discovery.zen.minimum_master_nodes", elasticsearch.ELASTICSEARCH_UNICAST_HOSTS.split(",").length].join("="),
+        ["-Des.discovery.zen.minimum_master_nodes", Math.floor(elasticsearch.ELASTICSEARCH_UNICAST_HOSTS.split(",").length/2) + 1].join("="),
         ["-Des.discovery.zen.ping.unicast.hosts", elasticsearch.ELASTICSEARCH_UNICAST_HOSTS].join("=")
     ]
 
