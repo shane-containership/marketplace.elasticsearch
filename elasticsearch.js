@@ -6,6 +6,33 @@ var dns = require("native-dns");
 var child_process = require("child_process");
 
 async.parallel({
+    ELASTICSEARCH_HOST: function(fn){
+        var question = dns.Question({
+          name: [os.hostname(), process.env.CS_CLUSTER_ID, "containership"].join("."),
+          type: "A"
+        });
+
+        var req = dns.Request({
+            question: question,
+            server: { address: "127.0.0.1", port: 53, type: "udp" },
+            timeout: 2000
+        });
+
+        req.on("timeout", function(){
+            return fn();
+        });
+
+        req.on("message", function (err, answer) {
+            var addresses = [];
+            answer.answer.forEach(function(a){
+                addresses.push(a.address);
+            });
+
+            return fn(null, _.first(addresses));
+        });
+
+        req.send();
+    },
     ELASTICSEARCH_UNICAST_HOSTS: function(fn){
         if(_.has(process.env, "ELASTICSEARCH_UNICAST_HOSTS"))
             return fn(null, process.env.ELASTICSEARCH_UNICAST_HOSTS);
@@ -45,6 +72,7 @@ async.parallel({
         ELASTICSEARCH_HTTP_PORT: "9200",
         ELASTICSEARCH_TCP_PORT: "9300",
         ELASTICSEARCH_CLUSTER_NAME: "ContainerShip",
+        ELASTICSEARCH_BIND_HOST: "0.0.0.0",
         ELASTICSEARCH_PLUGINS: ""
     });
 
@@ -54,6 +82,7 @@ async.parallel({
         ["-Des.http.port", elasticsearch.ELASTICSEARCH_HTTP_PORT].join("="),
         ["-Des.transport.tcp.port", elasticsearch.ELASTICSEARCH_TCP_PORT].join("="),
         ["-Des.cluster.name", elasticsearch.ELASTICSEARCH_CLUSTER_NAME].join("="),
+        ["-Des.network.host", elasticsearch.ELASTICSEARCH_HOST].join("="),
         ["-Des.discovery.zen.minimum_master_nodes", Math.floor(elasticsearch.ELASTICSEARCH_UNICAST_HOSTS.split(",").length/2) + 1].join("="),
         ["-Des.discovery.zen.ping.unicast.hosts", elasticsearch.ELASTICSEARCH_UNICAST_HOSTS].join("=")
     ]

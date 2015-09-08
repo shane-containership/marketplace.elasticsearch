@@ -3,16 +3,15 @@ FROM itzg/ubuntu-openjdk-7
 MAINTAINER ContainerShip Developers <developers@containership.io>
 
 # set environment variables
-ENV ES_VERSION 1.7.0
+ENV ES_VERSION 2.0.0-beta1
 ENV ES_HOME /usr/share/elasticsearch-$ES_VERSION
 
 # install dependencies
 RUN apt-get update
 RUN apt-get install wget npm -y
-RUN wget -qO /tmp/es.tgz https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.tar.gz \
-  && cd /usr/share \
-  && tar xf /tmp/es.tgz \
-  && rm /tmp/es.tgz
+RUN wget -qO /tmp/es.tgz https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/$ES_VERSION/elasticsearch-$ES_VERSION.tar.gz
+RUN cd /usr/share && tar xf /tmp/es.tgz
+RUN rm /tmp/es.tgz
 
 # add elasticsearch user
 RUN useradd -d $ES_HOME -M -r elasticsearch && chown -R elasticsearch: $ES_HOME
