@@ -3,7 +3,7 @@ FROM itzg/ubuntu-openjdk-7
 MAINTAINER ContainerShip Developers <developers@containership.io>
 
 # set environment variables
-ENV ES_VERSION 2.0.0-beta1
+ENV ES_VERSION 2.3.5
 ENV ES_HOME /usr/share/elasticsearch-$ES_VERSION
 
 # install dependencies

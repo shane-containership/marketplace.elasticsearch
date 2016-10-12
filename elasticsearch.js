@@ -88,6 +88,10 @@ async.parallel({
     ]
 
     async.each(elasticsearch.ELASTICSEARCH_PLUGINS.split(","), function(plugin, fn){
+        if(plugin === "") {
+            return fn();
+        }
+
         child_process.exec([[elasticsearch.ES_HOME, "bin", "plugin"].join("/"), "--install", plugin].join(" "), function(err, stdout, stderr){
             console.log(err);
             console.log(stdout);
