@@ -1,5 +1,5 @@
 {
-  "name": "docker-elasticsearch",
+  "name": "@containership/containership.marketplace.elasticsearch",
   "private": true,
   "description": "Docker image designed to run an Elasticsearch cluster on ContainerShip",
   "main": "elasticsearch.js",
